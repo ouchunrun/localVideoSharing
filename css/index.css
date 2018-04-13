@@ -10,10 +10,12 @@
 }
 
 #show{
-  width:90px;
-  height:110px;
-  overflow:hidden;
-  border:1px solid red;
+  width: 235px;
+  height: 110px;
+  overflow: hidden;
+  border: 1px solid red;
+  margin-top: 20px;
+  margin-left: 25px;
 }
 
 .highlight {

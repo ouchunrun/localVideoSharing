@@ -1,7 +1,5 @@
-var imgURL = "";
-var leftVideo = document.getElementById('leftVideo');
-var rightVideo = document.getElementById('rightVideo');
-var test = document.getElementById("test");
+let imgURL = "";
+let leftV = document.getElementById('leftVideo');
 
 function getImgURL(node) {
     let file = null;
@@ -23,7 +21,7 @@ function getImgURL(node) {
         let spstr = file.name.split(".");
         let fileType = spstr[spstr.length-1];
         if(fileType === "mp4" || fileType === "webm" || fileType === "mp3"){
-            leftVideo.src = window.URL.createObjectURL(file);
+            leftV.src = window.URL.createObjectURL(file);
         }
 
     }catch(e){      //这里不知道怎么处理了，如果是遨游的话会报这个异常
@@ -40,7 +38,7 @@ function getImgURL(node) {
     return imgURL;
 }
 
-function creatImg(imgRUL){   //根据指定URL创建一个Img对象
+function creatImg(imgRUL){   //图片可以在线显示
     var textHtml = "<img src='"+imgRUL+"'/>";
     $(".mark").after(textHtml);
 }
