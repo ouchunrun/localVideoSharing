@@ -5,28 +5,25 @@
   <title>本地视频音频播放</title>
   <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="css/index.css" />
-  <link rel="stylesheet" href="css/main.css" />
-
 </head>
 
 <body>
 
     <div id="container">
-    <!--本地视频显示处-->
+        <!--本地视频显示处-->
         <video id="leftVideo" autoplay controls loop muted></video>
         <video id="rightVideo" autoplay controls></video>
-  </div>
 
-   <div>
-     <!--文件上传-->
+        <!--文件上传-->
         <div id="show">
             <div class="mark"></div>
         </div>
         <br>
-        <input type="file" style="margin-left: 25px;" value="上传文件" onchange="getImgURL(this)">
-   </div>
+        <input type="file" value="上传文件" onchange="getFileURL(this)">
+    </div>
 
-    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <!--<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>-->
+    <script src="js/adapter-latest.js"></script>
     <script src="js/jquery-1.10.2.js"></script>
     <script src="js/upload.js"></script>
 

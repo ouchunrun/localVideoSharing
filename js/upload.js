@@ -1,7 +1,7 @@
 let imgURL = "";
 let leftV = document.getElementById('leftVideo');
 
-function getImgURL(node) {
+function getFileURL(node) {
     let file = null;
     try{
         if(node.files && node.files[0] ){
