@@ -1,28 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>本地视频音频播放</title>
-  <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="css/index.css" />
+    <meta charset="utf-8">
+    <title>本地视频音频播放</title>
+    <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="css/index.css"/>
 </head>
 
 <body>
 
     <div id="container">
         <!--本地视频显示处-->
-        <video id="leftVideo" autoplay controls loop muted></video>
-        <video id="rightVideo" autoplay controls></video>
+        <lable>local：</lable><video id="leftVideo" autoplay controls muted></video>
+        <lable>Remote：</lable><video id="rightVideo" autoplay controls></video>
 
-        <!--文件上传-->
-        <div id="show">
-            <div class="mark"></div>
-        </div>
+        <!--处理图片-->
         <br>
-        <input type="file" value="上传文件" onchange="getFileURL(this)">
+        <lable>Canvas：</lable><canvas id="myCanvas"></canvas>
+        <hr>
+
+        <div id="fileInfo"></div>
+        <br/>
+
+        <input id="uploadFile" type="file" value="上传文件"/>
+    </div>
+    <hr>
+    <div>
+        <p>目前demo兼容性很差，功能实现之前，暂不考虑兼容。</p>
+        <p>音视频和图片可以显示，图片的显示是通过canvas实现。</p>
+        <p>文档及其他类型的文件暂时不能预览。</p>
+        <p>音视频的约束暂未考虑。</p>
     </div>
 
-    <!--<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>-->
     <script src="js/adapter-latest.js"></script>
     <script src="js/jquery-1.10.2.js"></script>
     <script src="js/upload.js"></script>

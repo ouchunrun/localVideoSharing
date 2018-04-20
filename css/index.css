@@ -1,11 +1,3 @@
-#show {
-    width: 235px;
-    height: 110px;
-    overflow: hidden;
-    border: 1px solid #222222;
-    margin-top: 35px;
-}
-
 body {
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
@@ -21,7 +13,16 @@ audio {
 video {
     background: #222;
     margin: 0 0 20px 0;
-    width: 240px;
+}
+video, #show, canvas{
+    width: 375px;
+    height: 200px;
+}
+
+#show ,canvas{
+    /*overflow: hidden;*/
+    border: 1px solid #222222;
+    margin-top: 35px;
 }
 
 video:last-of-type {

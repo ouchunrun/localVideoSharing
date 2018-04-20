@@ -1,8 +1,7 @@
-var leftVideo = document.getElementById('leftVideo');
+let leftVideo = document.getElementById('leftVideo');
 let rightVideo = document.getElementById('rightVideo');
 
 let stream;
-
 let pc1;
 let pc2;
 let offerOptions = {
@@ -12,10 +11,24 @@ let offerOptions = {
 
 let startTime;
 
-function maybeCreateStream() {
-    if (stream) {
-       return;
+
+function setCanvas(fileURL) {
+    if(leftVideo.captureStream || leftVideo.mozCaptureStream){
+        leftVideo.src = "";
     }
+    let myCanvas = document.getElementById("myCanvas");
+    let cxt = myCanvas.getContext("2d");
+    let img = new Image();
+    img.src = fileURL;
+    img.onload = function () {
+        cxt.drawImage(img, 0, 0, 375, 200);
+    }
+    stream = myCanvas.captureStream();
+    call();
+}
+
+
+function maybeCreateStream() {
     if (leftVideo.captureStream) {
         stream = leftVideo.captureStream();
         console.log('Captured stream from leftVideo with captureStream', stream);
@@ -34,8 +47,8 @@ leftVideo.oncanplay = maybeCreateStream;
 if (leftVideo.readyState >= 3) {   // XMLHTTP.readyState
     maybeCreateStream();
 }
-
 leftVideo.play();
+
 
 rightVideo.onloadedmetadata = function() {
     trace('Remote video videoWidth: ' + this.videoWidth +
@@ -46,7 +59,7 @@ rightVideo.onresize = function() {
     trace('Remote video size changed to ' +
       rightVideo.videoWidth + 'x' + rightVideo.videoHeight);
     if (startTime) {
-        var elapsedTime = window.performance.now() - startTime;
+        let elapsedTime = window.performance.now() - startTime;
         trace('Setup time: ' + elapsedTime.toFixed(3) + 'ms');
         startTime = null;
     }
