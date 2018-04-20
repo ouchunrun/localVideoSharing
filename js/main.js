@@ -13,6 +13,7 @@ let startTime;
 
 
 function setCanvas(fileURL) {
+    console.log("Upload one image");
     if(leftVideo.captureStream || leftVideo.mozCaptureStream){
         leftVideo.src = "";
     }

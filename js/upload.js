@@ -2,8 +2,6 @@ let fileURL = "";
 let leftV = document.getElementById('leftVideo');
 let uploadFile = document.getElementById("uploadFile");
 let fileInfo = document.getElementById('fileInfo');
-let textHtml = "";
-
 
 uploadFile.addEventListener("change", function () {
     let file = null;
@@ -23,20 +21,15 @@ uploadFile.addEventListener("change", function () {
 
         let typeJudge = file.type.split("/")[0];
         if(typeJudge === "audio" || typeJudge === "video"){
-            // 视频或音频
             leftV.src = fileURL;
         }else if(typeJudge === "image"){
-            // 图片、动画等
             if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif') {
                 alert('不是有效的图片文件!');
                 return;
             }
             setCanvas(fileURL);     // setCanvas() is in the main.js
-        }else if(file.type === "application/pdf" || file.type === "application/msword"){
-            // word、pdf
-            console.log("msword和PDF文件: " + file.type);
         }else {
-            console.log("请上传视频、音频、图片、word、pdf等！！暂不支持别的applications");
+            console.log("请上传视频、音频、图片！！暂不支持别的applications");
         }
 
         // 打印上传的文件信息
@@ -48,13 +41,5 @@ uploadFile.addEventListener("change", function () {
         // 兼容问题很大，暂时不考虑兼容
         console.log(e.message);
     }
-})
-
-// 图片在线预览
-function creatImg(fileURL){
-    textHtml = "<img src='"+fileURL+"' />";
-    $(".mark").after(textHtml);
-}
-
-
+});
 
