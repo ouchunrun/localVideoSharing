@@ -10,34 +10,25 @@
 <body>
 
     <div id="container">
-        <!--本地视频显示处-->
-        <lable>local：</lable><video id="leftVideo" autoplay controls muted></video>
-        <lable>Remote：</lable><video id="rightVideo" autoplay controls></video>
+        <lable>local：</lable>
+        <video id="leftVideo" autoplay controls loop muted></video>
 
-        <!--处理图片-->
+        <lable>Remote：</lable>
+        <video id="rightVideo" autoplay controls></video>
+
         <br>
-        <lable>Canvas：</lable><canvas id="myCanvas"></canvas>
+        <lable>Canvas：</lable>
+        <canvas id="myCanvas"></canvas>
         <hr>
-
-        <div id="fileInfo"></div>
-        <br/>
 
         <input id="uploadFile" type="file" value="上传文件"/>
     </div>
     <hr>
-    <div>
-        <p>音视频和图片可以显示，图片的显示是通过canvas实现。</p>
-        <p>兼容性很差，没有做处理。</p>
-        <p>实现不了约束</p>
-    </div>
 
-    <script src="js/adapter-latest.js"></script>
-    <script src="js/jquery-1.10.2.js"></script>
-    <script src="js/upload.js"></script>
-
+    <!--<script src="js/adapter-latest.js"></script>-->
+    <!--<script src="js/jquery-1.10.2.js"></script>-->
     <script src="js/common.js"></script>
+    <script src="js/upload.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/ga.js"></script>
-
 </body>
 </html>

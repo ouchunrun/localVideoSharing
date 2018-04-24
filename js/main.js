@@ -11,18 +11,19 @@ let offerOptions = {
 
 let startTime;
 
-
 function setCanvas(fileURL) {
     console.log("Upload one image");
-    if(leftVideo.captureStream || leftVideo.mozCaptureStream){
-        leftVideo.src = "";
+    if(!leftVideo.captureStream && !leftVideo.mozCaptureStream){
+        trace("your browser is not support captureStream form video or radio");
     }
     let myCanvas = document.getElementById("myCanvas");
-    let cxt = myCanvas.getContext("2d");
     let img = new Image();
     img.src = fileURL;
+    let cxt = myCanvas.getContext("2d");
+    cxt.width = 387;
+    cxt.height = 200;
     img.onload = function () {
-        cxt.drawImage(img, 0, 0, 375, 200);
+        cxt.drawImage(img, 0, 0, cxt.width, cxt.height);
     }
     stream = myCanvas.captureStream();
     call();
@@ -57,6 +58,7 @@ rightVideo.onloadedmetadata = function() {
 };
 
 rightVideo.onresize = function() {
+    // 窗口或框架被重新调整大小。
     trace('Remote video size changed to ' +
       rightVideo.videoWidth + 'x' + rightVideo.videoHeight);
     if (startTime) {
@@ -77,6 +79,7 @@ function call() {
     if (audioTracks.length > 0) {
          trace('Using audio device: ' + audioTracks[0].label);
     }
+
     let servers = null;
     pc1 = new RTCPeerConnection(servers);
     trace('Created local peer connection object pc1');
@@ -88,6 +91,7 @@ function call() {
     pc2.onicecandidate = function(e) {
          onIceCandidate(pc2, e);
     };
+
     pc1.oniceconnectionstatechange = function(e) {
         onIceStateChange(pc1, e);
     };
@@ -95,7 +99,6 @@ function call() {
         onIceStateChange(pc2, e);
     };
     pc2.ontrack = gotRemoteStream;
-
     stream.getTracks().forEach(
         function(track) {
             pc1.addTrack(
@@ -105,7 +108,6 @@ function call() {
         }
     );
     trace('Added local stream to pc1');
-
     trace('pc1 createOffer start');
     pc1.createOffer(onCreateOfferSuccess, onCreateSessionDescriptionError, offerOptions);
 }
