@@ -1,5 +1,7 @@
-let leftVideo = document.getElementById('leftVideo');
-let rightVideo = document.getElementById('rightVideo');
+let localVideo = document.getElementById('localVideo');
+let remoteVideo = document.getElementById('remoteVideo');
+let uploadFile = document.getElementById("uploadFile");
+let fileURL = "";
 
 let stream;
 let pc1;
@@ -8,59 +10,83 @@ let offerOptions = {
     offerToReceiveAudio: 1,
     offerToReceiveVideo: 1
 };
-
 let startTime;
+
+uploadFile.addEventListener("change", function () {
+    trace("uploadFile is change!");
+    let file = null;
+    try{
+        file = uploadFile.files[0];
+        fileURL = window.URL.createObjectURL(file);
+
+        let typeJudge = file.type.split("/")[0];
+        if(typeJudge === "audio" || typeJudge === "video"){
+            localVideo.src = fileURL;
+        }else if(typeJudge === "image"){
+            setCanvas(fileURL);
+        }else {
+            console.log("please upload video/audio or image!");
+        }
+    }catch(e){
+        console.log(e.message);
+    }
+});
 
 function setCanvas(fileURL) {
     console.log("Upload one image");
-    if(!leftVideo.captureStream && !leftVideo.mozCaptureStream){
-        trace("your browser is not support captureStream form video or radio");
-    }
     let myCanvas = document.getElementById("myCanvas");
     let img = new Image();
-    img.src = fileURL;
     let cxt = myCanvas.getContext("2d");
     cxt.width = 387;
     cxt.height = 200;
+    img.src = fileURL;
     img.onload = function () {
         cxt.drawImage(img, 0, 0, cxt.width, cxt.height);
-    }
-    stream = myCanvas.captureStream();
-    call();
-}
-
-
-function maybeCreateStream() {
-    if (leftVideo.captureStream) {
-        stream = leftVideo.captureStream();
-        console.log('Captured stream from leftVideo with captureStream', stream);
+    };
+    if (myCanvas.captureStream) {
+        stream = myCanvas.captureStream(35);
+        console.log('Captured stream from localVideo with captureStream', stream);
         call();
-    } else if (leftVideo.mozCaptureStream) {
-        stream = leftVideo.mozCaptureStream();
-        console.log('Captured stream from leftVideo with mozCaptureStream()', stream);
+    } else if (myCanvas.mozCaptureStream) {
+        stream = myCanvas.mozCaptureStream(35);
+        console.log('Captured stream from localVideo with mozCaptureStream()', stream);
         call();
     } else {
         trace('captureStream() not supported');
     }
 }
 
-// Video tag capture must be set up after video tracks are enumerated.
-leftVideo.oncanplay = maybeCreateStream;
-if (leftVideo.readyState >= 3) {   // XMLHTTP.readyState
+
+function maybeCreateStream() {
+    if (localVideo.captureStream) {
+        stream = localVideo.captureStream();
+        console.log('Captured stream from localVideo with captureStream', stream);
+        call();
+    } else if (localVideo.mozCaptureStream) {
+        stream = localVideo.mozCaptureStream();
+        console.log('Captured stream from localVideo with mozCaptureStream()', stream);
+        call();
+    } else {
+        trace('captureStream() not supported');
+    }
+}
+
+localVideo.oncanplay = maybeCreateStream;
+if (localVideo.readyState >= 3) {
     maybeCreateStream();
 }
-leftVideo.play();
+localVideo.play();
 
 
-rightVideo.onloadedmetadata = function() {
+remoteVideo.onloadedmetadata = function() {
     trace('Remote video videoWidth: ' + this.videoWidth +
       'px,  videoHeight: ' + this.videoHeight + 'px');
 };
 
-rightVideo.onresize = function() {
+remoteVideo.onresize = function() {
     // 窗口或框架被重新调整大小。
     trace('Remote video size changed to ' +
-      rightVideo.videoWidth + 'x' + rightVideo.videoHeight);
+      remoteVideo.videoWidth + 'x' + remoteVideo.videoHeight);
     if (startTime) {
         let elapsedTime = window.performance.now() - startTime;
         trace('Setup time: ' + elapsedTime.toFixed(3) + 'ms');
@@ -69,6 +95,14 @@ rightVideo.onresize = function() {
 };
 
 function call() {
+    console.log("stream 的信息：");
+    let deviceId = stream.getVideoTracks()[0].getSettings().deviceId;
+    let aspectRatio = stream.getVideoTracks()[0].getSettings().aspectRatio;
+    let height = stream.getVideoTracks()[0].getSettings().height;
+    let width = stream.getVideoTracks()[0].getSettings().width;
+    let frameRate = stream.getVideoTracks()[0].getSettings().frameRate;
+    console.log(deviceId + "\n" + aspectRatio +"\n" + height +"\n" + width + "\n" + frameRate);
+
     trace('Starting call');
     startTime = window.performance.now();
     let videoTracks = stream.getVideoTracks();
@@ -143,8 +177,8 @@ function onSetSessionDescriptionError(error) {
 }
 
 function gotRemoteStream(event) {
-    if (rightVideo.srcObject !== event.streams[0]) {
-        rightVideo.srcObject = event.streams[0];
+    if (remoteVideo.srcObject !== event.streams[0]) {
+        remoteVideo.srcObject = event.streams[0];
         console.log('pc2 received remote stream', event);
     }
 }
