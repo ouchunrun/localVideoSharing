@@ -10,16 +10,24 @@
 <body>
 
     <div id="container">
-        <lable>local：</lable>
-        <video id="localVideo" autoplay controls loop muted></video>
 
-        <lable>Remote：</lable>
-        <video id="remoteVideo" autoplay controls></video>
+        <div>
+            <lable>local：</lable>
+            <video id="localVideo" autoplay controls loop muted></video>
+
+            <lable>Remote：</lable>
+            <video id="remoteVideo" autoplay controls></video>
+        </div>
 
         <br>
         <lable>Canvas：</lable>
         <canvas id="myCanvas"></canvas>
         <hr>
+
+        <div id="test-file-info"></div><hr>
+        <p2 id="localInfo"></p2>
+        <br/>
+
 
         <input id="uploadFile" type="file" value="上传文件"/>
     </div>

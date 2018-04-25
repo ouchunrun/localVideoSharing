@@ -1,6 +1,8 @@
 let localVideo = document.getElementById('localVideo');
 let remoteVideo = document.getElementById('remoteVideo');
 let uploadFile = document.getElementById("uploadFile");
+let info = document.getElementById('test-file-info');
+let localInfo = document.getElementById('localInfo');
 let fileURL = "";
 
 let stream;
@@ -18,6 +20,11 @@ uploadFile.addEventListener("change", function () {
     try{
         file = uploadFile.files[0];
         fileURL = window.URL.createObjectURL(file);
+
+        // 打印上传的文件信息
+        info.innerHTML = '文件: ' + file.name + '<br>' +
+            '大小: ' + file.size + '<br>' +
+            '修改: ' + file.lastModifiedDate + '<br>';
 
         let typeJudge = file.type.split("/")[0];
         if(typeJudge === "audio" || typeJudge === "video"){
@@ -44,11 +51,11 @@ function setCanvas(fileURL) {
         cxt.drawImage(img, 0, 0, cxt.width, cxt.height);
     };
     if (myCanvas.captureStream) {
-        stream = myCanvas.captureStream(35);
+        stream = myCanvas.captureStream(5);
         console.log('Captured stream from localVideo with captureStream', stream);
         call();
     } else if (myCanvas.mozCaptureStream) {
-        stream = myCanvas.mozCaptureStream(35);
+        stream = myCanvas.mozCaptureStream(5);
         console.log('Captured stream from localVideo with mozCaptureStream()', stream);
         call();
     } else {
@@ -59,11 +66,11 @@ function setCanvas(fileURL) {
 
 function maybeCreateStream() {
     if (localVideo.captureStream) {
-        stream = localVideo.captureStream();
+        stream = localVideo.captureStream(5);
         console.log('Captured stream from localVideo with captureStream', stream);
         call();
     } else if (localVideo.mozCaptureStream) {
-        stream = localVideo.mozCaptureStream();
+        stream = localVideo.mozCaptureStream(5);
         console.log('Captured stream from localVideo with mozCaptureStream()', stream);
         call();
     } else {
@@ -95,7 +102,6 @@ remoteVideo.onresize = function() {
 };
 
 function call() {
-    console.log("stream 的信息：");
     let deviceId = stream.getVideoTracks()[0].getSettings().deviceId;
     let aspectRatio = stream.getVideoTracks()[0].getSettings().aspectRatio;
     let height = stream.getVideoTracks()[0].getSettings().height;
@@ -103,6 +109,11 @@ function call() {
     let frameRate = stream.getVideoTracks()[0].getSettings().frameRate;
     console.log(deviceId + "\n" + aspectRatio +"\n" + height +"\n" + width + "\n" + frameRate);
 
+    localInfo.innerHTML = "deviceId：" + deviceId + '<br>' +
+                            "aspectRatio：" + aspectRatio + '<br>' +
+                            "height：" + height + '<br>' +
+                            "width：" + width + '<br>' +
+                            "frameRate：" + frameRate + '<br>';
     trace('Starting call');
     startTime = window.performance.now();
     let videoTracks = stream.getVideoTracks();
