@@ -1,7 +1,6 @@
 let localVideo = document.getElementById('localVideo');
 let remoteVideo = document.getElementById('remoteVideo');
 let uploadFile = document.getElementById("uploadFile");
-let info = document.getElementById('test-file-info');
 let localInfo = document.getElementById('localInfo');
 let fileURL = "";
 
@@ -14,63 +13,107 @@ let offerOptions = {
 };
 let startTime;
 
+/*********************************************新添测试代码***************************************************/
+let getUserMediaConstraintsDiv = document.querySelector('div#getUserMediaConstraints');
+let widthInput = document.querySelector('div#setWidth input');
+let heightInput = document.querySelector('div#setHeight input');
+let frameRateInput = document.querySelector('div#frameRate input');
+let constraints = {};
+
+widthInput.onclick =
+    heightInput.onclick =
+        frameRateInput.onclick =  displayRangeValue;
+
+main();
+
+function main() {
+    displayGetUserMediaConstraints();
+}
+
+function displayGetUserMediaConstraints() {
+    constraints = getUserMediaConstraints();
+    console.log('getUserMedia constraints', constraints);
+    getUserMediaConstraintsDiv.textContent = JSON.stringify(constraints, null, '    ');
+};
+
+function getUserMediaConstraints() {
+    constraints.video = {};
+    constraints.audio = true;
+
+    if (widthInput.value !== '0') {
+        constraints.video.width = widthInput.value;
+    }
+    if (heightInput.value !== '0') {
+        constraints.video.height = heightInput.value;
+    }
+
+    if (frameRateInput.value !== '0') {
+        constraints.video.frameRate = frameRateInput.value;
+    }
+    return constraints;
+}
+
+
+function displayRangeValue(e) {
+    console.log("displayRangeValue console.log");
+    let span = e.target.parentElement.querySelector('span');
+    span.textContent = e.target.value;
+    displayGetUserMediaConstraints();
+}
+
+/*********************************************新添测试代码***************************************************/
 uploadFile.addEventListener("change", function () {
     trace("uploadFile is change!");
     let file = null;
-    try{
+    try {
         file = uploadFile.files[0];
         fileURL = window.URL.createObjectURL(file);
 
-        // 打印上传的文件信息
-        info.innerHTML = '文件: ' + file.name + '<br>' +
-            '大小: ' + file.size + '<br>' +
-            '修改: ' + file.lastModifiedDate + '<br>';
-
         let typeJudge = file.type.split("/")[0];
-        if(typeJudge === "audio" || typeJudge === "video"){
+        if (typeJudge === "audio" || typeJudge === "video") {
             localVideo.src = fileURL;
-        }else if(typeJudge === "image"){
-            setCanvas(fileURL);
-        }else {
-            console.log("please upload video/audio or image!");
+        } else if (typeJudge === "image") {
+            // setCanvas(fileURL);
+        } else {
+            console.log("please upload video or audio");
         }
-    }catch(e){
+    } catch (e) {
         console.log(e.message);
     }
 });
 
-function setCanvas(fileURL) {
-    console.log("Upload one image");
-    let myCanvas = document.getElementById("myCanvas");
-    let img = new Image();
-    let cxt = myCanvas.getContext("2d");
-    cxt.width = 387;
-    cxt.height = 200;
-    img.src = fileURL;
-    img.onload = function () {
-        cxt.drawImage(img, 0, 0, cxt.width, cxt.height);
-    };
-    if (myCanvas.captureStream) {
-        stream = myCanvas.captureStream(5);
-        console.log('Captured stream from localVideo with captureStream', stream);
-        call();
-    } else if (myCanvas.mozCaptureStream) {
-        stream = myCanvas.mozCaptureStream(5);
-        console.log('Captured stream from localVideo with mozCaptureStream()', stream);
-        call();
-    } else {
-        trace('captureStream() not supported');
-    }
-}
+// function setCanvas(fileURL) {
+//     console.log("Upload one image");
+//     let myCanvas = document.getElementById("myCanvas");
+//     let img = new Image();
+//     let cxt = myCanvas.getContext("2d");
+//     // cxt.width = 387;
+//     // cxt.height = 200;
+//     img.src = fileURL;
+//     img.onload = function () {
+//         cxt.drawImage(img, 0, 0);
+//     };
+//     if (myCanvas.captureStream) {
+//         stream = myCanvas.captureStream(frameRateInput.value);
+//         console.log('Captured stream from localVideo with captureStream', stream);
+//         call();
+//     } else if (myCanvas.mozCaptureStream) {
+//         stream = myCanvas.mozCaptureStream(frameRateInput.value);
+//         console.log('Captured stream from localVideo with mozCaptureStream()', stream);
+//         call();
+//     } else {
+//         trace('captureStream() not supported');
+//     }
+// }
 
 
 function maybeCreateStream() {
     if (localVideo.captureStream) {
-        stream = localVideo.captureStream(5);
+        stream = localVideo.captureStream(frameRateInput.value);
         console.log('Captured stream from localVideo with captureStream', stream);
         call();
     } else if (localVideo.mozCaptureStream) {
-        stream = localVideo.mozCaptureStream(5);
+        stream = localVideo.mozCaptureStream(frameRateInput.value);
         console.log('Captured stream from localVideo with mozCaptureStream()', stream);
         call();
     } else {
@@ -85,15 +128,15 @@ if (localVideo.readyState >= 3) {
 localVideo.play();
 
 
-remoteVideo.onloadedmetadata = function() {
+remoteVideo.onloadedmetadata = function () {
     trace('Remote video videoWidth: ' + this.videoWidth +
-      'px,  videoHeight: ' + this.videoHeight + 'px');
+        'px,  videoHeight: ' + this.videoHeight + 'px');
 };
 
-remoteVideo.onresize = function() {
+remoteVideo.onresize = function () {
     // 窗口或框架被重新调整大小。
     trace('Remote video size changed to ' +
-      remoteVideo.videoWidth + 'x' + remoteVideo.videoHeight);
+        remoteVideo.videoWidth + 'x' + remoteVideo.videoHeight);
     if (startTime) {
         let elapsedTime = window.performance.now() - startTime;
         trace('Setup time: ' + elapsedTime.toFixed(3) + 'ms');
@@ -102,50 +145,52 @@ remoteVideo.onresize = function() {
 };
 
 function call() {
-    let deviceId = stream.getVideoTracks()[0].getSettings().deviceId;
-    let aspectRatio = stream.getVideoTracks()[0].getSettings().aspectRatio;
-    let height = stream.getVideoTracks()[0].getSettings().height;
-    let width = stream.getVideoTracks()[0].getSettings().width;
-    let frameRate = stream.getVideoTracks()[0].getSettings().frameRate;
-    console.log(deviceId + "\n" + aspectRatio +"\n" + height +"\n" + width + "\n" + frameRate);
-
-    localInfo.innerHTML = "deviceId：" + deviceId + '<br>' +
-                            "aspectRatio：" + aspectRatio + '<br>' +
-                            "height：" + height + '<br>' +
-                            "width：" + width + '<br>' +
-                            "frameRate：" + frameRate + '<br>';
     trace('Starting call');
+    if (stream) {
+        console.log(11111111)
+        stream.getVideoTracks()[0].applyConstraints(constraints).then(
+            function () {
+                console.log("Apply MediaTrackConstraints: " + constraints);
+            }
+        ).catch(
+            function (error) {
+                console.log("Can not Apply MediaTrackConstraints: " + error);
+            }
+        );
+    }
+
     startTime = window.performance.now();
     let videoTracks = stream.getVideoTracks();
     let audioTracks = stream.getAudioTracks();
     if (videoTracks.length > 0) {
-         trace('Using video device: ' + videoTracks[0].label);
+        trace('Using video device: ' + videoTracks[0].label);
+        // localPeerInfo.textContent = JSON.stringify(stream.getVideoTracks()[0].getSettings(), null, 2);
     }
     if (audioTracks.length > 0) {
-         trace('Using audio device: ' + audioTracks[0].label);
+        trace('Using audio device: ' + audioTracks[0].label);
     }
 
     let servers = null;
     pc1 = new RTCPeerConnection(servers);
     trace('Created local peer connection object pc1');
-    pc1.onicecandidate = function(e) {
-         onIceCandidate(pc1, e);
+    pc1.onicecandidate = function (e) {
+        onIceCandidate(pc1, e);
     };
     pc2 = new RTCPeerConnection(servers);
     trace('Created remote peer connection object pc2');
-    pc2.onicecandidate = function(e) {
-         onIceCandidate(pc2, e);
+    pc2.onicecandidate = function (e) {
+        onIceCandidate(pc2, e);
     };
 
-    pc1.oniceconnectionstatechange = function(e) {
+    pc1.oniceconnectionstatechange = function (e) {
         onIceStateChange(pc1, e);
     };
-    pc2.oniceconnectionstatechange = function(e) {
+    pc2.oniceconnectionstatechange = function (e) {
         onIceStateChange(pc2, e);
     };
     pc2.ontrack = gotRemoteStream;
     stream.getTracks().forEach(
-        function(track) {
+        function (track) {
             pc1.addTrack(
                 track,
                 stream
@@ -164,11 +209,11 @@ function onCreateSessionDescriptionError(error) {
 function onCreateOfferSuccess(desc) {
     trace('Offer from pc1\n' + desc.sdp);
     trace('pc1 setLocalDescription start');
-    pc1.setLocalDescription(desc, function() {
+    pc1.setLocalDescription(desc, function () {
         onSetLocalSuccess(pc1);
     }, onSetSessionDescriptionError);
     trace('pc2 setRemoteDescription start');
-    pc2.setRemoteDescription(desc, function() {
+    pc2.setRemoteDescription(desc, function () {
         onSetRemoteSuccess(pc2);
     }, onSetSessionDescriptionError);
     trace('pc2 createAnswer start');
@@ -184,7 +229,7 @@ function onSetRemoteSuccess(pc) {
 }
 
 function onSetSessionDescriptionError(error) {
-   trace('Failed to set session description: ' + error.toString());
+    trace('Failed to set session description: ' + error.toString());
 }
 
 function gotRemoteStream(event) {
@@ -197,25 +242,25 @@ function gotRemoteStream(event) {
 function onCreateAnswerSuccess(desc) {
     trace('Answer from pc2:\n' + desc.sdp);
     trace('pc2 setLocalDescription start');
-    pc2.setLocalDescription(desc, function() {
+    pc2.setLocalDescription(desc, function () {
         onSetLocalSuccess(pc2);
     }, onSetSessionDescriptionError);
     trace('pc1 setRemoteDescription start');
-    pc1.setRemoteDescription(desc, function() {
+    pc1.setRemoteDescription(desc, function () {
         onSetRemoteSuccess(pc1);
     }, onSetSessionDescriptionError);
 }
 
 function onIceCandidate(pc, event) {
     getOtherPc(pc).addIceCandidate(event.candidate)
-    .then(
-        function() {
-          onAddIceCandidateSuccess(pc);
-        },
-        function(err) {
-          onAddIceCandidateError(pc, err);
-        }
-    );
+        .then(
+            function () {
+                onAddIceCandidateSuccess(pc);
+            },
+            function (err) {
+                onAddIceCandidateError(pc, err);
+            }
+        );
     trace(getName(pc) + ' ICE candidate: \n' + (event.candidate ?
         event.candidate.candidate : '(null)'));
 }
@@ -243,3 +288,150 @@ function getOtherPc(pc) {
     return (pc === pc1) ? pc2 : pc1;
 }
 
+/*****************************************************************************/
+let senderStatsDiv = document.querySelector('div#senderStats');
+let receiverStatsDiv = document.querySelector('div#receiverStats');
+let txStatsDiv = document.querySelector('div#txStats');
+let rxStatsDiv = document.querySelector('div#rxStats');
+
+setInterval(function () {   // 定时获取SDP信息
+    if(pc2 && pc2.getRemoteStreams()[0]){   // 连接已经建立
+        // 获取远端
+        pc2.getStats(null, remoteGetStatsSuccessCallBack, getStatsError);
+
+        // 获取本地
+        pc1.getStats(null, localGetStatsSuccessCallBack, getStatsError);
+    }
+},1000);
+
+function remoteGetStatsSuccessCallBack(results) {
+    let detailInfoString = detailInfo(results);
+    let partInfoString = partInfo(results);
+    receiverStatsDiv.innerHTML = "<h2>Receiver stats</h2>" + detailInfoString;
+    rxStatsDiv.innerHTML = "<h2>Receiver mainly stats</h2>" + partInfoString;
+}
+
+function localGetStatsSuccessCallBack(results) {
+    let detailInfoString = detailInfo(results);
+    let partInfoString = partInfo(results);
+    senderStatsDiv.innerHTML = '<h2>Sender stats</h2>' + detailInfoString;
+    txStatsDiv.innerHTML = '<h2>Sender mainly stats</h2>' + partInfoString;
+}
+
+function detailInfo(results) {
+    // 详细信息
+    let detailInfoString = '';
+    Object.keys(results).forEach(function (key, index) {
+        let res = results[key];
+        detailInfoString += '<h3>Report ';
+        detailInfoString += index;
+        detailInfoString += '</h3>\n';
+        detailInfoString += 'time ' + res.timestamp + '<br>\n';
+        detailInfoString += 'type ' + res.type + '<br>\n';
+        Object.keys(res).forEach(function (k) {
+            if (k !== 'timestamp' && k !== 'type') {
+                detailInfoString += k + ': ' + res[k] + '<br>\n';
+            }
+        });
+        detailInfoString += '<hr>';
+    });
+    return detailInfoString;
+}
+
+function partInfo(results) {
+    // 部分信息
+    let statsString = '';
+    let framerate = 'NaN';
+    let bytes = 'NaN';
+    let packets = 'NaN';
+    let height = 'NaN';
+    let width = 'NaN';
+
+    Object.keys(results).forEach(function (key, index) {
+        let res = results[key];
+
+        if (adapter.browserDetails.browser == "firefox") {
+            if (key.match(/outbound_rtp_video_[\d.]+/)) {
+                Object.keys(res).forEach(function (k) {
+                    console.log("查看信息1： " + k);
+                    //Local video sent
+                    if (k == 'framerateMean') {
+                        framerate = Math.round(res[k]);
+                    } else if (k == 'bytesSent') {
+                        bytes = res[k];
+                    } else if (k == 'packetsSent') {
+                        packets = res[k];
+                    }
+                });
+            } else if (key.match(/inbound_rtp_video_[\d.]+/)) {
+                Object.keys(res).forEach(function (k) {
+                    console.log("查看信息2： " + k);
+                    //Local video received
+                    if (k == 'framerateMean') {
+                        framerate = Math.round(res[k]);
+                    } else if (k == 'bytesReceived') {
+                        bytes = res[k];
+                    } else if (k == 'packetsReceived') {
+                        packets = res[k];
+                    }
+                });
+            }
+        } else {
+            if (res.type == 'ssrc' && res['googFrameHeightReceived'] != undefined) {
+                Object.keys(res).forEach(function (k) {
+                    console.log("查看信息3： " + k);
+                    //Local video received
+                    if (k == 'googFrameRateReceived') {
+                        framerate = res[k];
+                    } else if (k == 'bytesReceived') {
+                        bytes = res[k];
+                    } else if (k == 'packetsReceived') {
+                        packets = res[k];
+                    }else if(k == 'googFrameHeightSent'){
+                        height = res[k];
+                        if(height == 'undefined'){
+                            height = res[googFrameHeightReceived];
+                        }
+                    }else if(k == 'googFrameWidthSent'){
+                        width = res[k];
+                        if(width == "undefined"){
+                            width = res[googFrameWidthReceived];
+                        }
+                    }
+                });
+            } else if (res.type == 'ssrc' && res['googFrameHeightSent'] != undefined) {
+                Object.keys(res).forEach(function (k) {
+                    console.log("查看信息4： " + k);
+                    //Local video sent
+                    if (k == 'googFrameRateSent') {
+                        framerate = res[k];
+                    } else if (k == 'bytesSent') {
+                        bytes = res[k];
+                    } else if (k == 'packetsSent') {
+                        packets = res[k];
+                    }else if(k == 'googFrameHeightSent'){
+                        height = res[k];
+                        if(height == 'undefined'){
+                            height = res[googFrameHeightReceived];
+                        }
+                    }else if(k == 'googFrameWidthSent'){
+                        width = res[k];
+                        if(width == "undefined"){
+                            width = res[googFrameWidthReceived];
+                        }
+                    }
+                });
+            }
+        }
+    });
+    statsString += 'FrameRate: ' + framerate + '<br>\n';
+    statsString += 'Height: ' + height + '<br>\n';
+    statsString += 'Width: ' + width + '<br>\n';
+    statsString += 'Bytes: ' + bytes + '<br>\n';
+    statsString += 'Packets: ' + packets + '<br>\n';
+    return statsString;
+}
+
+function getStatsError(error){
+    console.log(error);
+}

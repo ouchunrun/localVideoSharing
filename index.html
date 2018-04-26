@@ -10,30 +10,76 @@
 <body>
 
     <div id="container">
+        <div id="constraints">
+            <div id="input">
+                <div id="setHeight">
+                    <lable>Height <span>240</span>px:</lable>
+                    <input type="range" min="0" max="4320" value="240">
+                </div>
 
+                <div id="setWidth">
+                    <lable>Width <span>320</span>px:</lable>
+                    <input type="range" min="0" max="7690" value="320">
+                </div>
+
+                <div id="frameRate">
+                    <lable>Frame rate <span>1</span>fps:</lable>
+                    <input type="range" min="0" max="60" value="1">
+                </div>
+            </div>
+
+            <div id="getUserMediaConstraints" class="output"></div>
+        </div>
+        
         <div>
-            <lable>local：</lable>
-            <video id="localVideo" autoplay controls loop muted></video>
+            <hr>
+            <div class="local">
+                <div>local：</div>
+                <video id="localVideo" autoplay controls loop muted></video>
+            </div>
 
-            <lable>Remote：</lable>
-            <video id="remoteVideo" autoplay controls></video>
+            <div class="remote">
+                <div>Remote：</div>
+                <video id="remoteVideo" autoplay controls></video>
+            </div>
         </div>
 
         <br>
-        <lable>Canvas：</lable>
-        <canvas id="myCanvas"></canvas>
+        <!--<div class="canvas">-->
+            <!--<div>Canvas：</div>-->
+            <!--<canvas id="myCanvas"></canvas>-->
+        <!--</div>-->
         <hr>
 
-        <div id="test-file-info"></div><hr>
         <p2 id="localInfo"></p2>
         <br/>
 
-
         <input id="uploadFile" type="file" value="上传文件"/>
+        <br>
+        <hr>
+
+        <!--显示主要约束信息-->
+        <div class="showInfo">
+            <div id="txStats"></div>
+        </div>
+        <div class="showInfo">
+            <div id="rxStats"></div>
+        </div>
+
+        <hr style="clear: both">
+        <!--显示全部信息-->
+        <div class="allInfo">
+            <div id="senderStats"></div>
+        </div>
+        <div class="allInfo">
+            <div id="receiverStats"></div>
+        </div>
     </div>
     <hr>
 
-    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>   <!--提高兼容性-->
+    <!--<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>   &lt;!&ndash;提高兼容性&ndash;&gt;-->
+    <script src="js/adapter.js"></script>
+    <script src="js/getScreenId.js"></script>
     <script src="js/common.js"></script>
     <script src="js/main.js"></script>
 </body>
