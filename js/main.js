@@ -147,7 +147,6 @@ remoteVideo.onresize = function () {
 function call() {
     trace('Starting call');
     if (stream) {
-        console.log(11111111)
         stream.getVideoTracks()[0].applyConstraints(constraints).then(
             function () {
                 console.log("Apply MediaTrackConstraints: " + constraints);
@@ -164,7 +163,6 @@ function call() {
     let audioTracks = stream.getAudioTracks();
     if (videoTracks.length > 0) {
         trace('Using video device: ' + videoTracks[0].label);
-        // localPeerInfo.textContent = JSON.stringify(stream.getVideoTracks()[0].getSettings(), null, 2);
     }
     if (audioTracks.length > 0) {
         trace('Using audio device: ' + audioTracks[0].label);
