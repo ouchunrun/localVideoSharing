@@ -12,8 +12,6 @@ let offerOptions = {
     offerToReceiveVideo: 1
 };
 let startTime;
-
-/*********************************************新添测试代码***************************************************/
 let getUserMediaConstraintsDiv = document.querySelector('div#getUserMediaConstraints');
 let widthInput = document.querySelector('div#setWidth input');
 let heightInput = document.querySelector('div#setHeight input');
@@ -53,7 +51,6 @@ function getUserMediaConstraints() {
     return constraints;
 }
 
-
 function displayRangeValue(e) {
     console.log("displayRangeValue console.log");
     let span = e.target.parentElement.querySelector('span');
@@ -61,7 +58,6 @@ function displayRangeValue(e) {
     displayGetUserMediaConstraints();
 }
 
-/*********************************************新添测试代码***************************************************/
 uploadFile.addEventListener("change", function () {
     trace("uploadFile is change!");
     let file = null;
@@ -73,7 +69,7 @@ uploadFile.addEventListener("change", function () {
         if (typeJudge === "audio" || typeJudge === "video") {
             localVideo.src = fileURL;
         } else if (typeJudge === "image") {
-            // setCanvas(fileURL);
+            setCanvas(fileURL);
         } else {
             console.log("please upload video or audio");
         }
@@ -82,29 +78,29 @@ uploadFile.addEventListener("change", function () {
     }
 });
 
-// function setCanvas(fileURL) {
-//     console.log("Upload one image");
-//     let myCanvas = document.getElementById("myCanvas");
-//     let img = new Image();
-//     let cxt = myCanvas.getContext("2d");
-//     // cxt.width = 387;
-//     // cxt.height = 200;
-//     img.src = fileURL;
-//     img.onload = function () {
-//         cxt.drawImage(img, 0, 0);
-//     };
-//     if (myCanvas.captureStream) {
-//         stream = myCanvas.captureStream(frameRateInput.value);
-//         console.log('Captured stream from localVideo with captureStream', stream);
-//         call();
-//     } else if (myCanvas.mozCaptureStream) {
-//         stream = myCanvas.mozCaptureStream(frameRateInput.value);
-//         console.log('Captured stream from localVideo with mozCaptureStream()', stream);
-//         call();
-//     } else {
-//         trace('captureStream() not supported');
-//     }
-// }
+function setCanvas(fileURL) {
+    console.log("Upload one image");
+    let myCanvas = document.getElementById("myCanvas");
+    let img = new Image();
+    let cxt = myCanvas.getContext("2d");
+    cxt.width = 387;
+    cxt.height = 200;
+    img.src = fileURL;
+    img.onload = function () {
+        cxt.drawImage(img, 0, 0);
+    };
+    if (myCanvas.captureStream) {
+        stream = myCanvas.captureStream(frameRateInput.value);
+        console.log('Captured stream from localVideo with captureStream', stream);
+        call();
+    } else if (myCanvas.mozCaptureStream) {
+        stream = myCanvas.mozCaptureStream(frameRateInput.value);
+        console.log('Captured stream from localVideo with mozCaptureStream()', stream);
+        call();
+    } else {
+        trace('captureStream() not supported');
+    }
+}
 
 
 function maybeCreateStream() {
@@ -351,7 +347,6 @@ function partInfo(results) {
         if (adapter.browserDetails.browser == "firefox") {
             if (key.match(/outbound_rtp_video_[\d.]+/)) {
                 Object.keys(res).forEach(function (k) {
-                    console.log("查看信息1： " + k);
                     //Local video sent
                     if (k == 'framerateMean') {
                         framerate = Math.round(res[k]);
@@ -363,7 +358,6 @@ function partInfo(results) {
                 });
             } else if (key.match(/inbound_rtp_video_[\d.]+/)) {
                 Object.keys(res).forEach(function (k) {
-                    console.log("查看信息2： " + k);
                     //Local video received
                     if (k == 'framerateMean') {
                         framerate = Math.round(res[k]);
@@ -377,7 +371,6 @@ function partInfo(results) {
         } else {
             if (res.type == 'ssrc' && res['googFrameHeightReceived'] != undefined) {
                 Object.keys(res).forEach(function (k) {
-                    console.log("查看信息3： " + k);
                     //Local video received
                     if (k == 'googFrameRateReceived') {
                         framerate = res[k];
@@ -399,7 +392,6 @@ function partInfo(results) {
                 });
             } else if (res.type == 'ssrc' && res['googFrameHeightSent'] != undefined) {
                 Object.keys(res).forEach(function (k) {
-                    console.log("查看信息4： " + k);
                     //Local video sent
                     if (k == 'googFrameRateSent') {
                         framerate = res[k];
