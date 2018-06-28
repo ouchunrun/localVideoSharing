@@ -24,8 +24,6 @@ widthInput.onclick =
 
 main();
 
-console.log(aa);
-
 function main() {
     displayGetUserMediaConstraints();
 }
