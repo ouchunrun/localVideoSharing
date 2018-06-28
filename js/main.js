@@ -68,8 +68,6 @@ uploadFile.addEventListener("change", function () {
         let typeJudge = file.type.split("/")[0];
         if (typeJudge === "audio" || typeJudge === "video") {
             localVideo.src = fileURL;
-        } else if (typeJudge === "image") {
-            setCanvas(fileURL);
         } else {
             console.log("please upload video or audio");
         }
@@ -78,37 +76,12 @@ uploadFile.addEventListener("change", function () {
     }
 });
 
-function setCanvas(fileURL) {
-    console.log("Upload one image");
-    let myCanvas = document.getElementById("myCanvas");
-    let img = new Image();
-    let cxt = myCanvas.getContext("2d");
-    cxt.width = 387;
-    cxt.height = 200;
-    img.src = fileURL;
-    img.onload = function () {
-        cxt.drawImage(img, 0, 0);
-    };
-    if (myCanvas.captureStream) {
-        stream = myCanvas.captureStream(frameRateInput.value);
-        console.log('Captured stream from localVideo with captureStream', stream);
-        call();
-    } else if (myCanvas.mozCaptureStream) {
-        stream = myCanvas.mozCaptureStream(frameRateInput.value);
-        console.log('Captured stream from localVideo with mozCaptureStream()', stream);
-        call();
-    } else {
-        trace('captureStream() not supported');
-    }
-}
-
-
 function maybeCreateStream() {
     if (localVideo.captureStream) {
         stream = localVideo.captureStream(frameRateInput.value);
         console.log('Captured stream from localVideo with captureStream', stream);
         call();
-    } else if (localVideo.mozCaptureStream) {
+    } else if (localVideo.mozCaptureStream) {    // firefox
         stream = localVideo.mozCaptureStream(frameRateInput.value);
         console.log('Captured stream from localVideo with mozCaptureStream()', stream);
         call();
@@ -117,28 +90,13 @@ function maybeCreateStream() {
     }
 }
 
+// oncanplay 事件在用户可以开始播放视频/音频（audio/video）时触发。
+// readyState 表示请求在发送中或响应已完成
 localVideo.oncanplay = maybeCreateStream;
 if (localVideo.readyState >= 3) {
     maybeCreateStream();
 }
 localVideo.play();
-
-
-remoteVideo.onloadedmetadata = function () {
-    trace('Remote video videoWidth: ' + this.videoWidth +
-        'px,  videoHeight: ' + this.videoHeight + 'px');
-};
-
-remoteVideo.onresize = function () {
-    // 窗口或框架被重新调整大小。
-    trace('Remote video size changed to ' +
-        remoteVideo.videoWidth + 'x' + remoteVideo.videoHeight);
-    if (startTime) {
-        let elapsedTime = window.performance.now() - startTime;
-        trace('Setup time: ' + elapsedTime.toFixed(3) + 'ms');
-        startTime = null;
-    }
-};
 
 function call() {
     trace('Starting call');
@@ -155,14 +113,6 @@ function call() {
     }
 
     startTime = window.performance.now();
-    let videoTracks = stream.getVideoTracks();
-    let audioTracks = stream.getAudioTracks();
-    if (videoTracks.length > 0) {
-        trace('Using video device: ' + videoTracks[0].label);
-    }
-    if (audioTracks.length > 0) {
-        trace('Using audio device: ' + audioTracks[0].label);
-    }
 
     let servers = null;
     pc1 = new RTCPeerConnection(servers);
