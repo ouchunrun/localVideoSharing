@@ -80,11 +80,11 @@ function maybeCreateStream() {
     if (localVideo.captureStream) {
         stream = localVideo.captureStream(5);
         console.log('Captured stream from localVideo with captureStream', stream);
-        call();
+        call(stream);
     } else if (localVideo.mozCaptureStream) {    // firefox
         stream = localVideo.mozCaptureStream(5);
         console.log('Captured stream from localVideo with mozCaptureStream()', stream);
-        call();
+        call(stream);
     } else {
         trace('captureStream() not supported');
     }
@@ -105,9 +105,8 @@ function getcanvasStream() {
     call(stream)
 }
 
-function call(data) {
+function call(stream) {
     trace('Starting call');
-    var stream = data ? data : window.stream
     if (stream) {
         stream.getVideoTracks()[0].applyConstraints(constraints).then(
             function () {
