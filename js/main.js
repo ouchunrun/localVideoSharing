@@ -78,11 +78,11 @@ uploadFile.addEventListener("change", function () {
 
 function maybeCreateStream() {
     if (localVideo.captureStream) {
-        stream = localVideo.captureStream(frameRateInput.value);
+        stream = localVideo.captureStream(5);
         console.log('Captured stream from localVideo with captureStream', stream);
         call();
     } else if (localVideo.mozCaptureStream) {    // firefox
-        stream = localVideo.mozCaptureStream(frameRateInput.value);
+        stream = localVideo.mozCaptureStream(5);
         console.log('Captured stream from localVideo with mozCaptureStream()', stream);
         call();
     } else {
@@ -98,12 +98,20 @@ if (localVideo.readyState >= 3) {
 }
 localVideo.play();
 
-function call() {
+
+function getcanvasStream() {
+    var cavansElement = document.getElementById('canvasEl')
+    var stream = cavansElement.captureStream(5);
+    call(stream)
+}
+
+function call(data) {
     trace('Starting call');
+    var stream = data ? data : window.stream
     if (stream) {
         stream.getVideoTracks()[0].applyConstraints(constraints).then(
             function () {
-                console.log("Apply MediaTrackConstraints: " + constraints);
+                console.warn("Apply MediaTrackConstraints: ", JSON.stringify(constraints, null, ' '));
             }
         ).catch(
             function (error) {
